@@ -175,9 +175,9 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  int a=85;
+  int a=0xAA;
   a=a+(a<<8)+(a<<16)+(a<<24);
-  return !(~((~x)|a));
+  return !(~x&a);
 }
 /* 
  * negate - return -x 
@@ -304,16 +304,16 @@ unsigned floatScale2(unsigned uf) {//1 8 23 bias=127
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {//1 8 23
-  if(!((~uf)&(255<<23))) return (unsigned) (1<<31);
-  unsigned b=(uf>>23)&255;
-  int c=(uf&(~((1<<31)+(255<<23))))+(1<<23);
+  int b=(uf>>23)&255;
+  int c=(uf&((1<<23)-1))+(1<<23);
+  if(!((~uf)&(255<<23))) return 1<<31;
   b=b-127;
   if(b<0)return 0;
   else
   {
     b=b-23;
     if(b<0) c=c>>(-b);
-    else if(b>=8) return (unsigned) (1<<31);
+    else if(b>=8) return 1<<31;
     else if(b>0) c=c<<b;
     if(uf&(1<<31)) c=(~c)+1;
     return c;
